@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# this uses a shebang to easily start script with ./app.py
 
 import datetime
 import json
@@ -15,6 +16,7 @@ app = Flask(__name__)
 def get_saved_data():
     """Return data from cookie if found, else empty dict"""
     try:
+        # loads stands for 'load string'
         data = json.loads(request.cookies.get('character'))
     except TypeError:
         data = {}
@@ -42,17 +44,20 @@ def save():
     Save input of submitted form to cookie and return index.html
     """
     data = get_saved_data()
+    # items from html-form with POST method are in request.form.items()
     data.update(dict(request.form.items()))
 
     print(data)
 
+    # to set a cookie with Flask you first need to make the response
     response = make_response(redirect(url_for('builder')))
 
     cookie_expire_date = datetime.datetime.now() + datetime.timedelta(days=90)
 
+    # we created the response above, now we can set the cookie
     response.set_cookie(
         'character',
-        json.dumps(data),
+        json.dumps(data),  # dumps stands for 'dump string'
         expires=cookie_expire_date,
     )
 
